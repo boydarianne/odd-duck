@@ -24,6 +24,8 @@ const imgVariable = {
     new product("water-can", img / assets / water - can.jpg),
     new product("wine-glass", img / assets / wine - glass.jpg),
   ],
+  imageContainer: document.getElementById("images"),
+  
 };
 
 function product(productName, filePath, timesShown) {
