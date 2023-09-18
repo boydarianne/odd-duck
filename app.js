@@ -35,12 +35,16 @@ let randomImages = [];
 
 let oldImages = [];
 
+getData();
+
+
 function product(productName, filePath) {
   this.productName = productName;
   this.filePath = filePath;
   this.timesShown = 0;
   this.votes = 0;
 }
+
 
 product.prototype.render = function () {
   const imgElm = document.createElement("img");
@@ -111,6 +115,7 @@ function handleClickImg(event) {
 
   getRandomImg();
   console.log(imgVariable, rounds);
+  storeData();
 }
 
 imgVariable.imageContainer.addEventListener("click", handleClickImg);
@@ -158,27 +163,24 @@ function renderChart() {
   console.log(namesArray, ctx);
 }
 
-console.log(imgVariable)
+console.log(imgVariable);
 
-// const productPhoto = [];
-// const maxImages = 3;
+function storeData() {
+  localStorage.setItem("products", JSON.stringify(imgVariable.imgArray));
+}
 
-//constructor function to make image objects for images (this.name)
-// function imageObj() {
-//   this.imgKey = imgKey;
-// }
-// //function to select random images - similar to while loop
-// //have the randomizer function trigger on a button click
+function getData() {
+  const storeInfo = JSON.parse(localStorage.getItem("products"));
+  if (storeInfo) {
+    imgVariable.imgArray = [];
+    for (let i = 0; i < storeInfo.length; i++) {
+      const newProduct = new product(
+        storeInfo[i].productName,
+        storeInfo[i].filePath
+      );
+      imgVariable.imgArray.push(newProduct);
+    }
+  }
+  console.log(storeInfo)
+}
 
-// //while (productPhoto.length < maxImages) {
-// //  const randomImg = Math.floor(Math.random() * imagePaths.length);
-//   if (productPhoto.includes(randomImg)) {
-//     productPhoto.push(randomImg);
-//   }
-// }
-// for (let i = 0; i < maxImages; i++) {
-//   const imgElm = document.getElementById(`image-container`);
-//   imgElement.src = imagePaths[productPhoto[i]];
-// }
-
-// displayRandomImg();
