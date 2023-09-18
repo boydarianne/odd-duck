@@ -1,7 +1,7 @@
 body {
     background-color: green;
     width: fit-content;
-    
+
 }
 
 h1 {
@@ -10,4 +10,13 @@ h1 {
 
 header {
     background-color: blue;
+}
+
+#image-container {
+    flex: auto;
+    border: 25px black;
+}
+
+img {
+    width: 200px;
 }
