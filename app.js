@@ -31,6 +31,10 @@ const imgVariable = {
   buttonContainer: document.getElementById("button"),
 };
 
+let randomImages = [];
+
+let oldImages = [];
+
 function product(productName, filePath) {
   this.productName = productName;
   this.filePath = filePath;
@@ -45,18 +49,19 @@ product.prototype.render = function () {
   imgVariable.imageContainer.appendChild(imgElm);
 };
 
-product.prototype.renderResult = function (){
-  const listElm = document.createElement("li")
-  listElm.textContent = `${this.productName} had ${this.votes} votes, and was seen ${this.timesShown} times.`
-imgVariable.resultsContainer.appendChild(listElm);
-}
+product.prototype.renderResult = function () {
+  const listElm = document.createElement("li");
+  listElm.textContent = `${this.productName} had ${this.votes} votes, and was seen ${this.timesShown} times.`;
+  imgVariable.resultsContainer.appendChild(listElm);
+};
 
-function handleRenderResults(event){
+function handleRenderResults(event) {
   event.preventDefault();
 
-  for (let i = 0; i < imgVariable.imgArray.length; i++){
-    imgVariable.imgArray[i].renderResult()
+  for (let i = 0; i < imgVariable.imgArray.length; i++) {
+    imgVariable.imgArray[i].renderResult();
   }
+  renderChart();
 }
 
 //algorithm that will randomly generate three unique product images from the images directory.
@@ -64,23 +69,23 @@ function handleRenderResults(event){
 function getRandomImg() {
   imgVariable.imageContainer.innerHTML = null;
   //   let arrayCopy = "imgArray";
-  let newArray = [];
+  oldImages = randomImages;
+  randomImages = [];
 
   for (let i = 0; i < 3; i++) {
     let randNum = Math.floor(Math.random() * imgVariable.imgArray.length);
     let randomImg = imgVariable.imgArray[randNum];
-    while (newArray.includes(randomImg)) {
+    while (randomImages.includes(randomImg) || oldImages.includes(randomImg)) {
       randNum = Math.floor(Math.random() * imgVariable.imgArray.length);
       randomImg = imgVariable.imgArray[randNum];
     }
     randomImg.timesShown++;
     randomImg.render();
-    newArray.push(randomImg);
+    randomImages.push(randomImg);
   }
-  return newArray;
 }
 
-const randomImages = getRandomImg();
+getRandomImg();
 
 //event handler
 function handleClickImg(event) {
@@ -99,8 +104,7 @@ function handleClickImg(event) {
     const viewResultsButton = document.createElement("button");
     viewResultsButton.textContent = "view results";
     imgVariable.resultsContainer.appendChild(viewResultsButton);
-    viewResultsButton.addEventListener("click", handleRenderResults)
-
+    viewResultsButton.addEventListener("click", handleRenderResults);
 
     imgVariable.imageContainer.removeEventListener("click", handleClickImg);
   }
@@ -110,6 +114,51 @@ function handleClickImg(event) {
 }
 
 imgVariable.imageContainer.addEventListener("click", handleClickImg);
+
+function renderChart() {
+  const ctx = document.getElementById("myChart");
+
+  const namesArray = [];
+  const votesArray = [];
+  const viewsArray = [];
+
+  for (let i = 0; i < imgVariable.imgArray.length; i++) {
+    const product = imgVariable.imgArray[i];
+    namesArray.push(product.productName);
+    votesArray.push(product.votes);
+    viewsArray.push(product.timesShown);
+  }
+
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: namesArray,
+      datasets: [
+        {
+          label: "# of Votes",
+          data: votesArray,
+          borderWidth: 1,
+        },
+        {
+          label: "# of Views",
+          data: viewsArray,
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+
+  console.log(namesArray, ctx);
+}
+
+console.log(imgVariable)
 
 // const productPhoto = [];
 // const maxImages = 3;
